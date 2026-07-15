@@ -45,8 +45,7 @@ Supabase              Зовнішні сервіси:
 (не комітиться в git) та в серверних API-роутах. У браузер вони не потрапляють.
 
 **Стек:** Next.js + TypeScript + Tailwind CSS, компоненти з 21st.dev (Magic MCP),
-графіки — Recharts (або аналог, узгоджений з компонентами 21st.dev),
-Supabase JS SDK.
+графіки — Recharts, Supabase JS SDK.
 
 ## 4. Сторінки
 
