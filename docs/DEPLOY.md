@@ -30,8 +30,18 @@ vercel link          # привʼязати папку до проєкту Verce
 vercel --prod        # опублікувати
 ```
 
-Далі кожен `git push` у `main` публікується автоматично, якщо ввімкнено
-інтеграцію з GitHub.
+**Поточна адреса:** https://webfin-2dlrg83f7-yana-s-kyc.vercel.app
+
+Vercel за замовчуванням закриває новий проєкт своїм входом (SSO). Щоб сайт
+бачили всі: `vercel project protection disable --sso`.
+
+### Автопублікація при git push
+
+Поки НЕ увімкнена: привʼязка репозиторію впала з помилкою «You need to add a
+Login Connection to your GitHub account first». Щоб увімкнути — у Vercel:
+Settings → Login Connections → додати GitHub, потім Settings → Git → Connect
+репозиторій `yanysikys-dotcom/webfin`. До того кожна публікація — вручну
+командою `vercel --prod`.
 
 ## Після першої публікації
 
