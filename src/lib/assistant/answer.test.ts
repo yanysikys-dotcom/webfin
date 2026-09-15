@@ -28,7 +28,8 @@ describe("buildAnswer — total", () => {
   it("називає суму і період", () => {
     const a = buildAnswer({ kind: "total" }, period, txs);
     expect(a.text).toContain("2 200,00 ₴");
-    expect(a.text).toContain("цього місяця");
+    // Речення починається з великої літери, назва періоду — на початку.
+    expect(a.text.startsWith("Цього місяця")).toBe(true);
     expect(a.kind).toBe("total");
   });
 
@@ -62,7 +63,8 @@ describe("buildAnswer — category", () => {
     const a = buildAnswer({ kind: "category", category: "Продукти" }, period, txs);
     expect(a.text).toContain("Продукти");
     expect(a.text).toContain("800,00 ₴");
-    expect(a.text).toContain("2 покуп");
+    // Українські числівники: 2 покупки, а не «2 покупок»
+    expect(a.text).toContain("2 покупки");
   });
 
   it("категорія без витрат", () => {
@@ -81,6 +83,7 @@ describe("buildAnswer — count / average / income", () => {
   it("середній чек", () => {
     const a = buildAnswer({ kind: "average" }, period, txs);
     expect(a.text).toContain("550,00 ₴");
+    expect(a.text).toContain("усього 4 покупки");
   });
 
   it("надходження", () => {

@@ -1,7 +1,7 @@
 import {
   biggestExpense, compareMonths, spendingByCategory, totalSpent, type Tx,
 } from "@/lib/analytics";
-import { formatDate, formatMoney } from "@/lib/format";
+import { capitalize, formatDate, formatMoney, plural } from "@/lib/format";
 import type { Intent, IntentKind } from "@/lib/assistant/intent";
 import type { Period } from "@/lib/assistant/period";
 
@@ -22,14 +22,18 @@ function expenses(txs: Tx[]): Tx[] {
   return txs.filter((t) => t.amount < 0);
 }
 
+function purchases(n: number): string {
+  return `${n} ${plural(n, "покупка", "покупки", "покупок")}`;
+}
+
 function answerTotal(period: Period, txs: Tx[]): string {
   const list = expenses(txs);
   if (list.length === 0) return NO_DATA;
   const total = totalSpent(list);
   const top = spendingByCategory(list, 1)[0];
-  return (
-    `${period.label} ви витратили ${formatMoney(total)} — це ${list.length} покупок. ` +
-    `Найбільше пішло на «${top.category}»: ${formatMoney(top.total)}.`
+  return capitalize(
+    `${period.label} ви витратили ${formatMoney(total)} — це ${purchases(list.length)}. ` +
+      `Найбільше пішло на «${top.category}»: ${formatMoney(top.total)}.`,
   );
 }
 
@@ -57,38 +61,42 @@ function answerBiggest(period: Period, txs: Tx[]): string {
 function answerCategory(period: Period, txs: Tx[], category: string): string {
   const list = expenses(txs).filter((t) => t.category === category);
   if (list.length === 0) {
-    return `${period.label} витрат у категорії «${category}» не було.`;
+    return capitalize(`${period.label} витрат у категорії «${category}» не було.`);
   }
   const total = totalSpent(list);
   const allTotal = totalSpent(expenses(txs));
   const share = allTotal > 0 ? Math.round((total / allTotal) * 100) : 0;
   return (
     `На «${category}» ${period.label} пішло ${formatMoney(total)} — ` +
-    `${list.length} покупок, це ${share}% усіх витрат.`
+    `${purchases(list.length)}, це ${share}% усіх витрат.`
   );
 }
 
 function answerCount(period: Period, txs: Tx[]): string {
   const list = expenses(txs);
   if (list.length === 0) return NO_DATA;
-  return `${period.label} у вас ${list.length} покупок на загальну суму ${formatMoney(totalSpent(list))}.`;
+  return capitalize(
+    `${period.label} у вас ${purchases(list.length)} на загальну суму ${formatMoney(totalSpent(list))}.`,
+  );
 }
 
 function answerAverage(period: Period, txs: Tx[]): string {
   const list = expenses(txs);
   if (list.length === 0) return NO_DATA;
   const avg = Math.round(totalSpent(list) / list.length);
-  return `Середня покупка ${period.label} — ${formatMoney(avg)} (з ${list.length} покупок).`;
+  // Формулюємо в називному відмінку: після «з» потрібен родовий
+  // («з 21 покупки»), а purchases() дає називний.
+  return `Середня покупка ${period.label} — ${formatMoney(avg)}, усього ${purchases(list.length)}.`;
 }
 
 function answerIncome(period: Period, txs: Tx[]): string {
   const list = txs.filter((t) => t.amount > 0);
-  if (list.length === 0) return `${period.label} надходжень не було.`;
+  if (list.length === 0) return capitalize(`${period.label} надходжень не було.`);
   const total = list.reduce((s, t) => s + t.amount, 0);
   const biggest = list.reduce((a, b) => (b.amount > a.amount ? b : a));
-  return (
+  return capitalize(
     `${period.label} надійшло ${formatMoney(total)} (${list.length} шт.). ` +
-    `Найбільше — «${biggest.description}»: ${formatMoney(biggest.amount)}.`
+      `Найбільше — «${biggest.description}»: ${formatMoney(biggest.amount)}.`,
   );
 }
 
@@ -109,7 +117,9 @@ function answerUnusual(period: Period, txs: Tx[]): string {
     .slice(0, 3);
 
   if (outliers.length === 0) {
-    return `${period.label} нічого незвичного — усі покупки приблизно в межах ваших звичайних сум (близько ${formatMoney(median)}).`;
+    return capitalize(
+      `${period.label} нічого незвичного — усі покупки приблизно в межах ваших звичайних сум (близько ${formatMoney(median)}).`,
+    );
   }
   const lines = outliers.map(
     (t) =>

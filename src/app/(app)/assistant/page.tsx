@@ -1,10 +1,16 @@
+import { AssistantChat } from "@/components/assistant/chat";
+
 export default function AssistantPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-slate-900">AI-помічник</h1>
-      <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
-        Тут буде чат про ваші витрати (Етап 4)
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold text-slate-900">AI-помічник</h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Запитайте про свої витрати звичайною мовою — відповідь рахується з ваших
+          транзакцій.
+        </p>
       </div>
+      <AssistantChat />
     </div>
   );
 }
