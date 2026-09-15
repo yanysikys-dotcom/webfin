@@ -1,10 +1,19 @@
-export default function TransactionsPage() {
+import { getProfile, getVisibleTransactions } from "@/lib/data";
+import { createClient } from "@/lib/supabase/server";
+import { TransactionsList } from "@/components/transactions/transactions-list";
+
+export default async function TransactionsPage() {
+  const supabase = await createClient();
+  const profile = await getProfile(supabase);
+  const transactions = await getVisibleTransactions(supabase, profile, { limit: 1000 });
+
   return (
-    <div>
+    <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-slate-900">Транзакції</h1>
-      <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
-        Тут буде список транзакцій і кнопка «Оновити з Monobank» (Етап 2)
-      </div>
+      <TransactionsList
+        transactions={transactions}
+        showSync={profile.data_source === "monobank"}
+      />
     </div>
   );
 }
