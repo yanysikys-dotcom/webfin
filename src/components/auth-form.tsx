@@ -115,6 +115,17 @@ export function AuthForm({ mode }: Props) {
           </button>
         </form>
 
+        {mode === "login" && (
+          <p className="mt-4 text-center text-sm">
+            <Link
+              href="/forgot-password"
+              className="text-slate-500 hover:text-emerald-600 hover:underline"
+            >
+              Забули пароль?
+            </Link>
+          </p>
+        )}
+
         <p className="mt-4 text-center text-sm text-slate-500">
           {t.switchText}{" "}
           <Link
