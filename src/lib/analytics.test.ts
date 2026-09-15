@@ -73,3 +73,61 @@ describe("spendingByCategory", () => {
     expect(slices[5]).toEqual({ category: "Інше", total: 150 });
   });
 });
+
+describe("compareMonths", () => {
+  it("рахує поточний і попередній місяць та різницю у відсотках", async () => {
+    const { compareMonths } = await import("@/lib/analytics");
+    const txs = [
+      T("2026-09-05T10:00:00Z", -12000),
+      T("2026-09-10T10:00:00Z", -8000),
+      T("2026-08-05T10:00:00Z", -10000),
+      T("2026-08-20T10:00:00Z", -10000),
+      T("2026-07-01T10:00:00Z", -99999),
+    ];
+    const r = compareMonths(txs, new Date("2026-09-15T12:00:00Z"));
+    expect(r.current).toBe(20000);
+    expect(r.previous).toBe(20000);
+    expect(r.diff).toBe(0);
+    expect(r.percent).toBe(0);
+  });
+
+  it("зростання витрат дає додатний відсоток", async () => {
+    const { compareMonths } = await import("@/lib/analytics");
+    const txs = [
+      T("2026-09-05T10:00:00Z", -15000),
+      T("2026-08-05T10:00:00Z", -10000),
+    ];
+    const r = compareMonths(txs, new Date("2026-09-15T12:00:00Z"));
+    expect(r.diff).toBe(5000);
+    expect(r.percent).toBe(50);
+  });
+
+  it("порожній попередній місяць не ділить на нуль", async () => {
+    const { compareMonths } = await import("@/lib/analytics");
+    const r = compareMonths([T("2026-09-05T10:00:00Z", -15000)], new Date("2026-09-15T12:00:00Z"));
+    expect(r.previous).toBe(0);
+    expect(r.percent).toBe(0);
+  });
+
+  it("грудень порівнюється з листопадом того ж року", async () => {
+    const { compareMonths } = await import("@/lib/analytics");
+    const r = compareMonths(
+      [T("2026-12-05T10:00:00Z", -5000), T("2026-11-05T10:00:00Z", -2500)],
+      new Date("2026-12-15T12:00:00Z"),
+    );
+    expect(r.current).toBe(5000);
+    expect(r.previous).toBe(2500);
+    expect(r.percent).toBe(100);
+  });
+
+  it("січень порівнюється з груднем попереднього року", async () => {
+    const { compareMonths } = await import("@/lib/analytics");
+    const r = compareMonths(
+      [T("2027-01-05T10:00:00Z", -3000), T("2026-12-05T10:00:00Z", -6000)],
+      new Date("2027-01-15T12:00:00Z"),
+    );
+    expect(r.current).toBe(3000);
+    expect(r.previous).toBe(6000);
+    expect(r.percent).toBe(-50);
+  });
+});
