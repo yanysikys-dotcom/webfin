@@ -30,7 +30,7 @@ vercel link          # привʼязати папку до проєкту Verce
 vercel --prod        # опублікувати
 ```
 
-**Поточна адреса:** https://webfin-2dlrg83f7-yana-s-kyc.vercel.app
+**Поточна адреса:** https://webfin-yana-s-kyc.vercel.app
 
 Vercel за замовчуванням закриває новий проєкт своїм входом (SSO). Щоб сайт
 бачили всі: `vercel project protection disable --sso`.
@@ -49,6 +49,19 @@ Settings → Login Connections → додати GitHub, потім Settings → 
 - Перевірити, що віджет WayForPay відкривається (підпис залежить від домену).
 - ⚠️ Сайт стає публічним: будь-хто може зареєструватися. Щоб закрити доступ —
   Vercel → Settings → Deployment Protection, або вимкнути реєстрацію в коді.
+
+## Відновлення пароля
+
+Працює через вбудовану пошту Supabase (власний SMTP не налаштований).
+
+- Сторінки: `/forgot-password` (ввести пошту) і `/reset-password` (новий пароль).
+- У Supabase мають бути правильні `site_url` та `uri_allow_list` — інакше лист
+  приведе не туди. Зараз: `https://webfin-yana-s-kyc.vercel.app` і
+  дозволені `…vercel.app/**` та `http://localhost:3000/**`.
+- Посилання з листа діє **1 годину**.
+- ⚠️ Безкоштовна пошта Supabase має жорсткий ліміт (кілька листів на годину).
+  Для реальних користувачів треба свій SMTP: Supabase → Authentication →
+  Emails → SMTP Settings.
 
 ## Якщо база «заснула»
 

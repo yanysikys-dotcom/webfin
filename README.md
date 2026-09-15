@@ -1,6 +1,6 @@
 # WebFin — аналітика витрат
 
-**Опубліковано:** https://webfin-2dlrg83f7-yana-s-kyc.vercel.app
+**Опубліковано:** https://webfin-yana-s-kyc.vercel.app
 (інструкція з публікації — `docs/DEPLOY.md`)
 
 Веб-платформа фінансової аналітики: транзакції з Monobank, дашборд із
