@@ -18,6 +18,7 @@ export default async function TransactionsPage() {
       <TransactionsList
         transactions={transactions}
         showSync={profile.data_source === "monobank"}
+        isPremium={premium}
       />
     </div>
   );

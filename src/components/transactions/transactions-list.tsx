@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RefreshCw, Search } from "lucide-react";
+import { Download, RefreshCw, Search } from "lucide-react";
 import { CATEGORIES, colorForCategory } from "@/lib/categories";
 import type { TxRow } from "@/lib/data";
 import { formatDate, formatMoney } from "@/lib/format";
@@ -10,9 +10,11 @@ import { formatDate, formatMoney } from "@/lib/format";
 export function TransactionsList({
   transactions,
   showSync,
+  isPremium,
 }: {
   transactions: TxRow[];
   showSync: boolean;
+  isPremium: boolean;
 }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -79,16 +81,27 @@ export function TransactionsList({
             <option key={c}>{c}</option>
           ))}
         </select>
-        {showSync && (
-          <button
-            onClick={handleSync}
-            disabled={syncing}
-            className="ml-auto flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
-          >
-            <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
-            {syncing ? "Оновлюю…" : "Оновити з Monobank"}
-          </button>
-        )}
+        <div className="ml-auto flex items-center gap-3">
+          {isPremium && (
+            <a
+              href="/api/export"
+              className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+            >
+              <Download className="h-4 w-4" />
+              Експорт у Excel
+            </a>
+          )}
+          {showSync && (
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+            >
+              <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
+              {syncing ? "Оновлюю…" : "Оновити з Monobank"}
+            </button>
+          )}
+        </div>
       </div>
 
       {notice && <p className="text-sm text-slate-600">{notice}</p>}
