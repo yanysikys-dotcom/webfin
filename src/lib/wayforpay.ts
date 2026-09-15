@@ -25,10 +25,15 @@ export type PurchaseParams = {
 function config() {
   const merchantAccount = process.env.WAYFORPAY_MERCHANT_ACCOUNT;
   const secret = process.env.WAYFORPAY_SECRET_KEY;
-  const domain = process.env.WAYFORPAY_DOMAIN;
+  // Домен має збігатися з тим, де відкривається віджет, інакше WayForPay
+  // відхилить підпис. На Vercel він відомий зі змінної VERCEL_URL,
+  // локально — з WAYFORPAY_DOMAIN (localhost).
+  const domain =
+    process.env.WAYFORPAY_DOMAIN ||
+    (process.env.VERCEL_URL ? process.env.VERCEL_URL.replace(/^https?:\/\//, "") : "");
   if (!merchantAccount || !secret || !domain) {
     throw new Error(
-      "У .env.local бракує WAYFORPAY_MERCHANT_ACCOUNT / WAYFORPAY_SECRET_KEY / WAYFORPAY_DOMAIN",
+      "Бракує WAYFORPAY_MERCHANT_ACCOUNT / WAYFORPAY_SECRET_KEY, або не вдалося визначити домен",
     );
   }
   return { merchantAccount, secret, domain };

@@ -1,0 +1,47 @@
+# Публікація WebFin на Vercel
+
+## Що потрібно один раз
+
+1. Акаунт Vercel (вхід через GitHub — тоді репозиторій `webfin` видно одразу).
+2. Вхід у CLI: `vercel login` → підтвердити код у браузері.
+
+## Змінні оточення на Vercel
+
+Ті самі значення, що в локальному `.env.local` — **окрім домену WayForPay**.
+У git вони не потрапляють ніколи; на Vercel живуть у Settings → Environment Variables.
+
+| Змінна | Звідки | Примітка |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` | та сама база, що локально |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` | публічний ключ, безпечний для браузера |
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` | ⚠️ секрет, лише сервер |
+| `TOKEN_ENCRYPTION_KEY` | `.env.local` | ⚠️ має збігатися з локальним, інакше вже збережені токени Monobank не розшифруються |
+| `WAYFORPAY_MERCHANT_ACCOUNT` | `.env.local` | тестовий `test_merch_n1` |
+| `WAYFORPAY_SECRET_KEY` | `.env.local` | ⚠️ секрет |
+| `WAYFORPAY_DOMAIN` | **не задавати** | у продакшні береться з `VERCEL_URL` автоматично |
+
+`SUPABASE_ACCESS_TOKEN` і `SUPABASE_PROJECT_REF` потрібні лише локальним
+скриптам (`run-sql.mjs`, `set-premium.mjs`) — на Vercel їх не додаємо.
+
+## Публікація
+
+```bash
+vercel link          # привʼязати папку до проєкту Vercel (один раз)
+vercel --prod        # опублікувати
+```
+
+Далі кожен `git push` у `main` публікується автоматично, якщо ввімкнено
+інтеграцію з GitHub.
+
+## Після першої публікації
+
+- Перевірити вхід/реєстрацію на бойовому домені.
+- Перевірити, що віджет WayForPay відкривається (підпис залежить від домену).
+- ⚠️ Сайт стає публічним: будь-хто може зареєструватися. Щоб закрити доступ —
+  Vercel → Settings → Deployment Protection, або вимкнути реєстрацію в коді.
+
+## Якщо база «заснула»
+
+Безкоштовний Supabase призупиняє проєкт після тижня без активності
+(помилка `ENOTFOUND ...supabase.co`). Дані зберігаються — розбудити кнопкою
+**Restore** на supabase.com.
