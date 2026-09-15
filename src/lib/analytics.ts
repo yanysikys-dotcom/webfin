@@ -84,3 +84,23 @@ export function spendingByCategory(txs: Tx[], topN = 5): CategorySlice[] {
   }
   return [...top, { category: "Інше", total: rest }];
 }
+
+export function compareMonths(
+  txs: Tx[],
+  now = new Date(),
+): { current: number; previous: number; diff: number; percent: number } {
+  const inMonth = (year: number, month: number) =>
+    totalSpent(
+      txs.filter((t) => {
+        const d = new Date(t.occurred_at);
+        return d.getFullYear() === year && d.getMonth() === month;
+      }),
+    );
+
+  const current = inMonth(now.getFullYear(), now.getMonth());
+  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const previous = inMonth(prevDate.getFullYear(), prevDate.getMonth());
+  const diff = current - previous;
+  const percent = previous === 0 ? 0 : Math.round((diff / previous) * 100);
+  return { current, previous, diff, percent };
+}

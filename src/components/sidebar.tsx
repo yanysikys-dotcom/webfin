@@ -11,6 +11,7 @@ import {
   LogOut,
   ReceiptText,
   Settings,
+  Sparkles,
   Wallet,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -23,7 +24,7 @@ const ICONS: Record<string, React.ElementType> = {
   "/settings": Settings,
 };
 
-export function Sidebar() {
+export function Sidebar({ isPremium = false }: { isPremium?: boolean }) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -44,9 +45,20 @@ export function Sidebar() {
       <div className="flex items-center gap-2 overflow-hidden px-4 py-5">
         <Wallet className="h-7 w-7 shrink-0 text-emerald-600" />
         {!collapsed && (
-          <span className="whitespace-nowrap text-lg font-semibold text-slate-900">
-            WebFin
-          </span>
+          <>
+            <span className="whitespace-nowrap text-lg font-semibold text-slate-900">
+              WebFin
+            </span>
+            {isPremium && (
+              <span
+                title="Активний Преміум"
+                className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700"
+              >
+                <Sparkles className="h-3 w-3" />
+                Преміум
+              </span>
+            )}
+          </>
         )}
       </div>
 
